@@ -38,12 +38,47 @@ server.listen(port, hostname, () => {
 const routes = {
     contentCreator: (data, res) => {
         let bodyParse = JSON.parse(data.body);
-        console.log(bodyParse);
-        console.log(bodyParse.title);
-        console.log(bodyParse.subtitle);
-        console.log(bodyParse.content);
-        console.log(bodyParse.from);
 
-        let result = Math.round(Math.random());
+        // console.log(bodyParse);
+        // console.log(bodyParse.title);
+        // console.log(bodyParse.subtitle);
+        // console.log(bodyParse.content);
+        // console.log(bodyParse.from);
+
+        // console.log(data.queryString.mail);
+
+        let payload = {
+          message: "",
+          code: 0
+        };
+        
+        if (bodyParse.title == undefined || bodyParse.title == "") {
+          payload.message += "חובה למלא כותרת לכתבה\n";
+          payload.code = 500;
+        }
+        if (bodyParse.subtitle == undefined || bodyParse.subtitle == "") {
+          payload.message += "חובה למלא תת כותרת לכתבה\n";
+          payload.code = 500;
+        }
+        if (bodyParse.content == undefined || bodyParse.content == "") {
+          payload.message += "חובה למלא תוכן לכתבה\n";
+          payload.code = 500;
+        }
+        if (bodyParse.from == undefined || bodyParse.from == "") {
+          payload.message += "חובה למלא מי כותב הכתבה\n";
+          payload.code = 500;
+        }
+        if (payload.code == 0) {
+          payload.message = "הצלחה";
+          payload.code = 200;//Math.round(Math.random());
+        }
+
+        let payloadStr = JSON.stringify(payload);
+        res.setHeader("Content-Type", "application/json");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.writeHead(payload.code);
+
+        res.write(payloadStr);
+        res.end("\n");
     }
 }
